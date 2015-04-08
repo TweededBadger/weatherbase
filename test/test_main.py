@@ -1,5 +1,5 @@
 import unittest
-from datetime import date
+from datetime import date, datetime
 from weather_history.WeatherHistory import WeatherHistory
 from weather_history.DataObjects import WeatherObject
 
@@ -29,6 +29,35 @@ class TestWeatherHistory(unittest.TestCase):
         print day_data
         self.assertIsInstance(day_data,WeatherObject)
         self.assertIsNotNone(day_data)
+
+    def test_weather_data_difference(self):
+        city_code = 67730
+        test_date = date(2012, 6, 24)
+        today_data = self.wr.get_day_data(city_code,test_date)
+        today_average_data = self.wr.get_average_data(city_code,test_date)
+        difference_data = today_data.difference(today_average_data)
+        self.assertIsInstance(difference_data,WeatherObject)
+        self.assertIsNotNone(difference_data)
+        self.assertIsInstance(difference_data.dewpoint,float)
+        self.assertIsInstance(difference_data.temperature,float)
+        self.assertIsInstance(difference_data.barometer,float)
+        self.assertIsInstance(difference_data.wind_speed,float)
+        self.assertIsInstance(difference_data.humidity,float)
+
+    def test_get_hourly_data(self):
+        city_code = 67730
+        test_date_time = datetime(2011,6,24,12,0,0)
+        hour_data = self.wr.get_hour_data(city_code,test_date_time)
+        print hour_data
+
+        self.assertIsInstance(hour_data,WeatherObject)
+        self.assertIsNotNone(hour_data)
+        self.assertIsInstance(hour_data.dewpoint,float)
+        self.assertIsInstance(hour_data.temperature,float)
+        self.assertIsInstance(hour_data.barometer,float)
+        self.assertIsInstance(hour_data.wind_speed,float)
+        self.assertIsInstance(hour_data.humidity,float)
+
 
 
 

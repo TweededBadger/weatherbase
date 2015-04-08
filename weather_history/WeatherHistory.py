@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
+import datetime
 import lxml.html
 import re
+import time
 from weather_history import helpers
 from weather_history.DataObjects import WeatherObject
 
@@ -50,6 +52,36 @@ class WeatherHistory():
         barometer_data = helpers.get_table_data(tree,"Barometer",1)
         wind_speed_data = helpers.get_table_data(tree,"Wind Speed",1)
         precipitation_data = helpers.get_table_data(tree,"Precipitation",1)
+        return_object = WeatherObject(
+            temp_data,dewpoint_data,humidity_data,barometer_data,wind_speed_data,precipitation_data)
+        return return_object
+
+    def get_times_track(self, tree):
+        rows = tree.xpath(".//table/tr[@class='bb']")
+
+        times = [datetime.datetime(*time.strptime(row.findall('td')[0].text, "%I:%M %p")[:6]) for row in rows]
+        return times
+
+    def get_hour_data(self, city_code, dt,units='metric'):
+        url = "http://www.weatherbase.com/weather/weatherhourly.php3?s={0}&date={1}-{2}-{3}&set={4}"\
+            .format(city_code,dt.year,dt.month,dt.day,units)
+        print url
+        #print self.scraper.get_source(url)
+        tree = lxml.html.fromstring(self.scraper.get_source(url))
+
+        tracked_times = self.get_times_track(tree)
+        comparisontime = tracked_times[0].replace(minute=dt.minute,hour=dt.hour)
+        for t in tracked_times:
+            if comparisontime < t:
+                time_to_check = t.strftime("%I:%M %p")
+                break
+
+        temp_data = helpers.get_table_data(tree,time_to_check,1)
+        dewpoint_data = helpers.get_table_data(tree,time_to_check,2)
+        humidity_data = helpers.get_table_data(tree,time_to_check,3)
+        barometer_data = helpers.get_table_data(tree,time_to_check,4)
+        wind_speed_data = helpers.get_table_data(tree,time_to_check,7)
+        precipitation_data = helpers.get_table_data(tree,time_to_check,9)
         return_object = WeatherObject(
             temp_data,dewpoint_data,humidity_data,barometer_data,wind_speed_data,precipitation_data)
         return return_object

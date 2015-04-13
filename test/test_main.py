@@ -8,10 +8,10 @@ class TestWeatherHistory(unittest.TestCase):
         self.wr = WeatherHistory()
 
     def test_get_city_id(self):
-        country_code = "TR"
-        city_name = "Nusaybin"
+        country_code = "GB"
+        city_name = "London"
         city_code = self.wr.get_city_id(country_code,city_name)
-        self.assertEqual(city_code, 172752)
+        self.assertEqual(city_code, 67730)
 
     def test_get_date_average_data(self):
         city_code = 172752
@@ -45,8 +45,8 @@ class TestWeatherHistory(unittest.TestCase):
         self.assertIsInstance(difference_data.humidity,float)
 
     def test_get_hourly_data(self):
-        city_code = 67730
-        test_date_time = datetime(2011,6,24,12,0,0)
+        city_code = 51730
+        test_date_time = datetime(2014,4,20,12,0,0)
         hour_data = self.wr.get_hour_data(city_code,test_date_time)
         print hour_data
 

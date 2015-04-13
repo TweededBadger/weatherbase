@@ -1,13 +1,14 @@
 
 class WeatherObject():
     def __init__(self,temperature = None,dewpoint = None,humidity = None,
-                 barometer = None,wind_speed = None,precipitation = None):
+                 barometer = None,wind_speed = None,precipitation = None,conditions = None):
         self.precipitation = self.float_or_none(precipitation)
         self.wind_speed = self.float_or_none(wind_speed)
         self.barometer = self.float_or_none(barometer)
         self.humidity = self.float_or_none(humidity)
         self.temperature = self.float_or_none(temperature)
         self.dewpoint = self.float_or_none(dewpoint)
+        self.conditions = conditions
 
     def __str__(self):
         return_string = ""
@@ -17,6 +18,7 @@ class WeatherObject():
         return_string += "\nhumidity: " + str(self.humidity)
         return_string += "\ndewpoint: " + str(self.dewpoint)
         return_string += "\nprecipitation: " + str(self.precipitation)
+        return_string += "\nconditions: " + str(self.conditions)
 
         return return_string
 

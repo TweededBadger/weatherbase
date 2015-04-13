@@ -15,6 +15,8 @@ class WeatherHistory():
 
     def get_city_id(self, country_code, city_name):
         url = "http://www.weatherbase.com/weather/city.php3?c=" + country_code
+        if country_code == "GB":
+            url = url + "&s=ENG"
         tree = lxml.html.fromstring(self.scraper.get_source(url))
         cities = tree.find_class("redglow")
         for element in cities:
@@ -82,6 +84,7 @@ class WeatherHistory():
         barometer_data = helpers.get_table_data(tree,time_to_check,4)
         wind_speed_data = helpers.get_table_data(tree,time_to_check,7)
         precipitation_data = helpers.get_table_data(tree,time_to_check,9)
+        conditions_data = helpers.get_table_data(tree,time_to_check,11)
         return_object = WeatherObject(
-            temp_data,dewpoint_data,humidity_data,barometer_data,wind_speed_data,precipitation_data)
+            temp_data,dewpoint_data,humidity_data,barometer_data,wind_speed_data,precipitation_data,conditions_data)
         return return_object

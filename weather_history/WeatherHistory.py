@@ -28,7 +28,7 @@ class WeatherHistory():
     #http://www.weatherbase.com/weather/weatherdaily.php3?s=172752&month=02&theday=09&units=metric
     #http://www.weatherbase.com/weather/weatherhourly.php3?s=172752&date=2010-02-17&set=metric
 
-    def get_average_data(self, city_code, today,units='metric'):
+    def get_average_data(self, city_code, today,units='us'):
 
         url = "http://www.weatherbase.com/weather/weatherdaily.php3?s={0}&month={1}&theday={2}&units={3}"\
             .format(city_code,today.month,today.day,units)
@@ -43,7 +43,7 @@ class WeatherHistory():
             temp_data,dewpoint_data,humidity_data,barometer_data,wind_speed_data,precipitation_data)
         return return_object
 
-    def get_day_data(self, city_code, d, units='metric'):
+    def get_day_data(self, city_code, d, units='us'):
         url = "http://www.weatherbase.com/weather/weatherhourly.php3?s={0}&date={1}-{2}-{3}&set={4}"\
             .format(city_code,d.year,d.month,d.day,units)
         print url
@@ -64,7 +64,7 @@ class WeatherHistory():
         times = [datetime.datetime(*time.strptime(row.findall('td')[0].text, "%I:%M %p")[:6]) for row in rows]
         return times
 
-    def get_hour_data(self, city_code, dt,units='metric'):
+    def get_hour_data(self, city_code, dt,units='us'):
         url = "http://www.weatherbase.com/weather/weatherhourly.php3?s={0}&date={1}-{2}-{3}&set={4}"\
             .format(city_code,dt.year,dt.month,dt.day,units)
         print url
@@ -72,10 +72,13 @@ class WeatherHistory():
         tree = lxml.html.fromstring(self.scraper.get_source(url))
 
         tracked_times = self.get_times_track(tree)
+        if len(tracked_times) == 0:
+            print "No data"
+            return None
         comparisontime = tracked_times[0].replace(minute=dt.minute,hour=dt.hour)
         for t in tracked_times:
             if comparisontime < t:
-                time_to_check = t.strftime("%I:%M %p")
+                time_to_check = t.strftime("%I:%M %p").lstrip('0')
                 break
 
         temp_data = helpers.get_table_data(tree,time_to_check,1)
